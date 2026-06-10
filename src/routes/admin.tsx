@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SiteLayout } from "@/components/site/Layout";
-import { useContent, useAdminSession, type SiteContent } from "@/lib/store";
+import { useContent, useAdminSession, type SiteContent, type TableLayout } from "@/lib/store";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
