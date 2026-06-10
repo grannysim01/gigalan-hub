@@ -261,7 +261,7 @@ function TableLayoutEditor({
     return [...map.entries()].sort((a, b) => a[0] - b[0]);
   }, [tables]);
 
-  const maxRow = tables.reduce((m, t) => Math.max(m, t.row), 1);
+  
 
   const moveWithinRow = (id: number, dir: -1 | 1) => {
     const t = tables.find((x) => x.id === id);
