@@ -106,10 +106,10 @@ function AdminPage() {
 
           <Card title="Gallery">
             <ObjectListEditor
-              items={content.gallery}
+              items={content.gallery.map((g) => ({ id: g.id, title: g.title, year: g.year, description: g.description, image: g.image }))}
               fields={["title", "year", "description", "image"]}
-              onChange={(v) => update({ gallery: v.map((g, i) => ({ id: (g as { id?: string }).id ?? `g${i}-${Date.now()}`, ...g })) as SiteContent["gallery"] })}
-              empty={{ title: "", year: "", description: "", image: "" }}
+              onChange={(v) => update({ gallery: v.map((g, i) => ({ id: g.id || `g${i}-${Date.now()}`, title: g.title, year: g.year, description: g.description, image: g.image })) })}
+              empty={{ id: "", title: "", year: "", description: "", image: "" }}
             />
           </Card>
 
