@@ -114,6 +114,7 @@ export const defaultContent: SiteContent = {
     { id: "g4", title: "First GiGa-LAN", year: "2018", description: "Six friends, one basement, three power strips. The origin.", image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=1200&q=70" },
   ],
   seats: defaultSeats(),
+  tables: defaultTables(),
   admin: { username: "admin", password: "gigalan2026" },
 };
 
