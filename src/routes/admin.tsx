@@ -324,20 +324,10 @@ function TableLayoutEditor({
               </div>
             </div>
           ))}
-          <button
-            onClick={() => {
-              // add an empty new row by bumping last table into the new row? Instead just inform: use ↓ to push tables down.
-              const nextId = (tables.reduce((m, t) => Math.max(m, t.id), 0) || 0) + 1;
-              onChange([...tables, { id: nextId, row: maxRow + 1, rotation: 0 }]);
-            }}
-            className="border border-border px-3 py-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:border-primary"
-          >
-            + Add row (with one new table)
-          </button>
         </div>
       </div>
       <p className="font-mono text-[10px] text-muted-foreground">
-        Tip: ← → reorders within a row, ↑ ↓ moves between rows, ⟲ rotates the table 90°.
+        Tip: ← → reorders within a row, ↑ ↓ moves between rows (use ↓ on a row's last table to start a new row), ⟲ rotates the table 90°.
       </p>
     </div>
   );
