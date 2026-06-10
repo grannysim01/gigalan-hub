@@ -240,3 +240,105 @@ function ObjectListEditor<T extends Record<string, string>>({ items, fields, onC
     </div>
   );
 }
+
+function TableLayoutEditor({
+  tables,
+  onChange,
+  onAddTable,
+  onRemoveTable,
+}: {
+  tables: TableLayout[];
+  onChange: (t: TableLayout[]) => void;
+  onAddTable: () => void;
+  onRemoveTable: (id: number) => void;
+}) {
+  const rows = useMemo(() => {
+    const map = new Map<number, TableLayout[]>();
+    tables.forEach((t) => {
+      if (!map.has(t.row)) map.set(t.row, []);
+      map.get(t.row)!.push(t);
+    });
+    return [...map.entries()].sort((a, b) => a[0] - b[0]);
+  }, [tables]);
+
+  const maxRow = tables.reduce((m, t) => Math.max(m, t.row), 1);
+
+  const moveWithinRow = (id: number, dir: -1 | 1) => {
+    const t = tables.find((x) => x.id === id);
+    if (!t) return;
+    const sameRow = tables.filter((x) => x.row === t.row);
+    const others = tables.filter((x) => x.row !== t.row);
+    const idx = sameRow.findIndex((x) => x.id === id);
+    const swap = idx + dir;
+    if (swap < 0 || swap >= sameRow.length) return;
+    [sameRow[idx], sameRow[swap]] = [sameRow[swap], sameRow[idx]];
+    onChange([...others, ...sameRow]);
+  };
+
+  const setRow = (id: number, row: number) => {
+    onChange(tables.map((t) => (t.id === id ? { ...t, row: Math.max(1, row) } : t)));
+  };
+
+  const rotate = (id: number) => {
+    onChange(tables.map((t) => {
+      if (t.id !== id) return t;
+      const next = ((t.rotation + 90) % 360) as TableLayout["rotation"];
+      return { ...t, rotation: next };
+    }));
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        <button onClick={onAddTable} className="border border-primary/60 px-3 py-2 text-xs uppercase tracking-widest text-primary hover:bg-primary/10">+ Add table</button>
+        <button onClick={() => onChange(tables.map((t) => ({ ...t, row: t.row + 0 })))} className="hidden">noop</button>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground self-center">
+          {tables.length} tables · {rows.length} rows
+        </span>
+      </div>
+
+      <div className="overflow-x-auto border border-border bg-background/40 p-3">
+        <div className="space-y-3">
+          {rows.map(([rowNum, rowTables]) => (
+            <div key={rowNum} className="flex items-center gap-2">
+              <span className="w-12 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Row {rowNum}</span>
+              <div className="flex flex-wrap items-center gap-1">
+                {rowTables.map((t) => (
+                  <div key={t.id} className="flex flex-col items-center border border-border bg-surface/60 p-1">
+                    <div
+                      className="flex h-10 w-14 items-center justify-center border border-primary/40 bg-background font-mono text-[10px]"
+                      style={{ transform: `rotate(${t.rotation}deg)` }}
+                    >
+                      T{String(t.id).padStart(2, "0")}
+                    </div>
+                    <div className="mt-1 flex gap-0.5">
+                      <button title="move left in row" onClick={() => moveWithinRow(t.id, -1)} className="border border-border px-1 text-[10px] hover:border-primary">←</button>
+                      <button title="row up" onClick={() => setRow(t.id, t.row - 1)} className="border border-border px-1 text-[10px] hover:border-primary">↑</button>
+                      <button title="row down" onClick={() => setRow(t.id, t.row + 1)} className="border border-border px-1 text-[10px] hover:border-primary">↓</button>
+                      <button title="move right in row" onClick={() => moveWithinRow(t.id, 1)} className="border border-border px-1 text-[10px] hover:border-primary">→</button>
+                      <button title="rotate 90°" onClick={() => rotate(t.id)} className="border border-border px-1 text-[10px] hover:border-primary">⟲</button>
+                      <button title="delete" onClick={() => onRemoveTable(t.id)} className="border border-destructive/60 px-1 text-[10px] text-destructive hover:bg-destructive/10">✕</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() => {
+              // add an empty new row by bumping last table into the new row? Instead just inform: use ↓ to push tables down.
+              const nextId = (tables.reduce((m, t) => Math.max(m, t.id), 0) || 0) + 1;
+              onChange([...tables, { id: nextId, row: maxRow + 1, rotation: 0 }]);
+            }}
+            className="border border-border px-3 py-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:border-primary"
+          >
+            + Add row (with one new table)
+          </button>
+        </div>
+      </div>
+      <p className="font-mono text-[10px] text-muted-foreground">
+        Tip: ← → reorders within a row, ↑ ↓ moves between rows, ⟲ rotates the table 90°.
+      </p>
+    </div>
+  );
+}
