@@ -124,7 +124,7 @@ function load(): SiteContent {
     const raw = localStorage.getItem(KEY);
     if (!raw) return defaultContent;
     const parsed = JSON.parse(raw);
-    return { ...defaultContent, ...parsed, seats: parsed.seats?.length ? parsed.seats : defaultContent.seats };
+    return { ...defaultContent, ...parsed, seats: parsed.seats?.length ? parsed.seats : defaultContent.seats, tables: parsed.tables?.length ? parsed.tables : defaultContent.tables };
   } catch { return defaultContent; }
 }
 
