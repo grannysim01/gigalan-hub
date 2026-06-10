@@ -291,7 +291,6 @@ function TableLayoutEditor({
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
         <button onClick={onAddTable} className="border border-primary/60 px-3 py-2 text-xs uppercase tracking-widest text-primary hover:bg-primary/10">+ Add table</button>
-        <button onClick={() => onChange(tables.map((t) => ({ ...t, row: t.row + 0 })))} className="hidden">noop</button>
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground self-center">
           {tables.length} tables · {rows.length} rows
         </span>
