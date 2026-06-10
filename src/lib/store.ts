@@ -34,7 +34,14 @@ export interface SiteContent {
   history: string;
   gallery: GalleryItem[];
   seats: Seat[];
+  tables: TableLayout[];
   admin: { username: string; password: string };
+}
+
+export interface TableLayout {
+  id: number;
+  row: number;
+  rotation: 0 | 90 | 180 | 270;
 }
 
 const TABLES = 23;
@@ -47,6 +54,16 @@ function defaultSeats(): Seat[] {
       out.push({ id: `T${String(t).padStart(2, "0")}-S${s}`, table: t, seat: s, reservedBy: null });
     }
   }
+  return out;
+}
+
+function defaultTables(): TableLayout[] {
+  const out: TableLayout[] = [];
+  const perRow = [6, 6, 6, 5];
+  let id = 1;
+  perRow.forEach((count, rowIdx) => {
+    for (let i = 0; i < count; i++) out.push({ id: id++, row: rowIdx + 1, rotation: 0 });
+  });
   return out;
 }
 
@@ -97,6 +114,7 @@ export const defaultContent: SiteContent = {
     { id: "g4", title: "First GiGa-LAN", year: "2018", description: "Six friends, one basement, three power strips. The origin.", image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=1200&q=70" },
   ],
   seats: defaultSeats(),
+  tables: defaultTables(),
   admin: { username: "admin", password: "gigalan2026" },
 };
 
@@ -106,7 +124,7 @@ function load(): SiteContent {
     const raw = localStorage.getItem(KEY);
     if (!raw) return defaultContent;
     const parsed = JSON.parse(raw);
-    return { ...defaultContent, ...parsed, seats: parsed.seats?.length ? parsed.seats : defaultContent.seats };
+    return { ...defaultContent, ...parsed, seats: parsed.seats?.length ? parsed.seats : defaultContent.seats, tables: parsed.tables?.length ? parsed.tables : defaultContent.tables };
   } catch { return defaultContent; }
 }
 
