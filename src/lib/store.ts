@@ -34,7 +34,14 @@ export interface SiteContent {
   history: string;
   gallery: GalleryItem[];
   seats: Seat[];
+  tables: TableLayout[];
   admin: { username: string; password: string };
+}
+
+export interface TableLayout {
+  id: number;
+  row: number;
+  rotation: 0 | 90 | 180 | 270;
 }
 
 const TABLES = 23;
@@ -47,6 +54,16 @@ function defaultSeats(): Seat[] {
       out.push({ id: `T${String(t).padStart(2, "0")}-S${s}`, table: t, seat: s, reservedBy: null });
     }
   }
+  return out;
+}
+
+function defaultTables(): TableLayout[] {
+  const out: TableLayout[] = [];
+  const perRow = [6, 6, 6, 5];
+  let id = 1;
+  perRow.forEach((count, rowIdx) => {
+    for (let i = 0; i < count; i++) out.push({ id: id++, row: rowIdx + 1, rotation: 0 });
+  });
   return out;
 }
 
