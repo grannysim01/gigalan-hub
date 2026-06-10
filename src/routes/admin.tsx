@@ -113,18 +113,25 @@ function AdminPage() {
             />
           </Card>
 
-          <Card title="Seats">
-            <p className="text-sm text-muted-foreground">Clear individual reservations.</p>
-            <div className="mt-3 max-h-72 overflow-y-auto border border-border">
-              {content.seats.filter((s) => s.reservedBy).length === 0 && (
-                <div className="p-4 text-sm text-muted-foreground">No reservations yet.</div>
-              )}
-              {content.seats.filter((s) => s.reservedBy).map((s) => (
-                <div key={s.id} className="flex items-center justify-between border-b border-border px-3 py-2 text-sm last:border-0">
-                  <span className="font-mono">{s.id}</span>
-                  <span className="flex-1 px-3">{s.reservedBy}</span>
-                  <button onClick={() => update((c) => ({ ...c, seats: c.seats.map((x) => x.id === s.id ? { ...x, reservedBy: null } : x) }))}
-                          className="text-xs text-destructive hover:underline">clear</button>
+          <Card title="Seat reservations">
+            <p className="text-sm text-muted-foreground">Assign or clear who sits where. Players cannot self-book.</p>
+            <div className="mt-3 max-h-96 overflow-y-auto border border-border">
+              {content.seats.map((s) => (
+                <div key={s.id} className="flex items-center gap-2 border-b border-border px-3 py-2 text-sm last:border-0">
+                  <span className="w-20 font-mono text-xs">{s.id}</span>
+                  <input
+                    value={s.reservedBy ?? ""}
+                    placeholder="— free —"
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      update((c) => ({ ...c, seats: c.seats.map((x) => x.id === s.id ? { ...x, reservedBy: v.trim() ? v : null } : x) }));
+                    }}
+                    className={`flex-1 border bg-background px-2 py-1 font-mono text-xs outline-none focus:border-primary ${s.reservedBy ? "border-destructive/60" : "border-border"}`}
+                  />
+                  {s.reservedBy && (
+                    <button onClick={() => update((c) => ({ ...c, seats: c.seats.map((x) => x.id === s.id ? { ...x, reservedBy: null } : x) }))}
+                            className="text-xs text-destructive hover:underline">clear</button>
+                  )}
                 </div>
               ))}
             </div>
@@ -133,6 +140,35 @@ function AdminPage() {
               Clear all reservations
             </button>
           </Card>
+
+          <Card title="Room layout">
+            <TableLayoutEditor
+              tables={content.tables}
+              onChange={(tables) => update({ tables })}
+              onAddTable={() => {
+                const nextId = (content.tables.reduce((m, t) => Math.max(m, t.id), 0) || 0) + 1;
+                const lastRow = content.tables.reduce((m, t) => Math.max(m, t.row), 1);
+                update((c) => ({
+                  ...c,
+                  tables: [...c.tables, { id: nextId, row: lastRow, rotation: 0 }],
+                  seats: [
+                    ...c.seats,
+                    { id: `T${String(nextId).padStart(2, "0")}-S1`, table: nextId, seat: 1, reservedBy: null },
+                    { id: `T${String(nextId).padStart(2, "0")}-S2`, table: nextId, seat: 2, reservedBy: null },
+                  ],
+                }));
+              }}
+              onRemoveTable={(id) => {
+                if (!confirm(`Remove table ${id} and its seats?`)) return;
+                update((c) => ({
+                  ...c,
+                  tables: c.tables.filter((t) => t.id !== id),
+                  seats: c.seats.filter((s) => s.table !== id),
+                }));
+              }}
+            />
+          </Card>
+
 
           <Card title="Admin credentials">
             <Field label="Username" value={content.admin.username} onChange={(v) => update({ admin: { ...content.admin, username: v } })} />
