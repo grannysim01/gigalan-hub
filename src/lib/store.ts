@@ -24,6 +24,7 @@ export interface GalleryItem {
 export interface TableLayout {
   id: number;
   row: number;
+  column?: number;
   rotation: 0 | 90 | 180 | 270;
 }
 
