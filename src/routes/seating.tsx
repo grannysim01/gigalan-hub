@@ -45,10 +45,10 @@ function SeatingPage() {
     <SiteLayout>
       <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">/ deployment map</div>
-          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Seating</h1>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">/ ülésrend</div>
+          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Helyfoglalás</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Live seat status. Green = available, red = reserved. To book a seat, contact an organizer — reservations are managed by staff.
+            A helyfoglalással kapcsolatban kérlek vedd fel velünk a kapcsolatot (Facebook/Discord)!
             <span className="ml-2 font-mono text-primary">{free}/{content.seats.length} free</span>
           </p>
           <div className="mt-4 flex flex-wrap gap-4 text-xs">
@@ -61,7 +61,7 @@ function SeatingPage() {
       <section className="mx-auto max-w-7xl px-4 py-10">
         <div className="overflow-x-auto border border-border bg-surface/30 p-4 sm:p-8 clip-corner">
           <div className="mb-6 border-b border-dashed border-primary/40 pb-2 text-center font-mono text-xs uppercase tracking-widest text-primary">
-            ▲ Stage / Casters ▲
+            ▲ Színpad ▲
           </div>
           <div className="space-y-6">
             {rows.map(([rowNum, tables]) => (
@@ -73,7 +73,7 @@ function SeatingPage() {
             ))}
           </div>
           <div className="mt-8 border-t border-dashed border-border pt-2 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Entrance
+            
           </div>
         </div>
       </section>

@@ -5,7 +5,7 @@ import { useContent } from "@/lib/store";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — GiGa-LAN" },
+      { title: "Kapcsolat — GiGa-LAN" },
       { name: "description", content: "Get in touch with the GiGa-LAN organizers, find the venue on the map." },
       { property: "og:title", content: "Contact — GiGa-LAN" },
       { property: "og:description", content: "Contact info, address and map for GiGa-LAN." },
@@ -22,8 +22,8 @@ function ContactPage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <div className="font-mono text-xs uppercase tracking-widest text-primary">/ comms</div>
-          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Contact</h1>
-          <p className="mt-3 max-w-2xl text-muted-foreground">Need help, want to sponsor, or have a press question? Reach the organizers directly.</p>
+          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Elérhetőségek</h1>
+          <p className="mt-3 max-w-2xl text-muted-foreground">Segítségre van szükséged, szponzot érdekelne vagy szimplán csak kérdésed van? Vedd fel a kapcsolatot velünk.</p>
         </div>
       </section>
 
@@ -40,12 +40,12 @@ function ContactPage() {
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-16 lg:grid-cols-[1fr_1.4fr]">
         <div className="border border-border bg-surface/40 p-6 clip-corner">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">Venue</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">Helyszín</div>
           <h3 className="mt-1 font-display text-2xl">{content.location}</h3>
           <p className="mt-2 text-sm text-muted-foreground">{content.address}</p>
           <a href={content.mapsUrl} target="_blank" rel="noopener noreferrer"
              className="mt-6 inline-block bg-primary px-5 py-3 font-display text-sm tracking-widest text-primary-foreground clip-corner hover:opacity-90">
-            Open in Google Maps ↗
+            Google Maps megnyitása ↗
           </a>
         </div>
         <div className="aspect-[4/3] overflow-hidden border border-border clip-corner lg:aspect-auto">

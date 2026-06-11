@@ -17,7 +17,7 @@ export function Countdown({ iso }: { iso: string }) {
     const id = setInterval(() => setT(diff(target)), 1000);
     return () => clearInterval(id);
   }, [target]);
-  const cells: [string, number][] = [["DAYS", t.d], ["HRS", t.h], ["MIN", t.m], ["SEC", t.s]];
+  const cells: [string, number][] = [["NAP", t.d], ["ÓRA", t.h], ["PERC", t.m], ["MÁSODPERC", t.s]];
   return (
     <div className="grid grid-cols-4 gap-2 sm:gap-4">
       {cells.map(([label, val]) => (

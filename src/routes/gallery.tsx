@@ -5,7 +5,7 @@ import { useContent } from "@/lib/store";
 export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
-      { title: "Gallery — GiGa-LAN" },
+      { title: "Galéria — GiGa-LAN" },
       { name: "description", content: "Throwbacks from past GiGa-LAN events and the story of the community." },
       { property: "og:title", content: "Gallery — GiGa-LAN" },
       { property: "og:description", content: "Past events and our story." },
@@ -20,8 +20,8 @@ function GalleryPage() {
     <SiteLayout>
       <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">/ archive</div>
-          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Gallery & history</h1>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">/ archívum</div>
+          <h1 className="mt-2 font-display text-5xl sm:text-7xl">Galéria & történet</h1>
           <p className="mt-4 max-w-3xl text-muted-foreground">{content.history}</p>
         </div>
       </section>

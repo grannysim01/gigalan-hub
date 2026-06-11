@@ -3,11 +3,11 @@ import type { ReactNode } from "react";
 import { useContent, useContentRealtime } from "@/lib/store";
 
 const NAV = [
-  { to: "/", label: "Home" },
-  { to: "/lan", label: "The LAN" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/seating", label: "Seating" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", label: "Kezdőlap" },
+  { to: "/lan", label: "LAN" },
+  { to: "/gallery", label: "Galéria" },
+  { to: "/seating", label: "Ülésrend" },
+  { to: "/contact", label: "Kapcsolat" },
 ] as const;
 
 export function SiteLayout({ children }: { children: ReactNode }) {
@@ -34,7 +34,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
             <Link to="/seating" className="ml-2 bg-primary px-4 py-2 font-display text-sm tracking-widest text-primary-foreground clip-corner hover:opacity-90">
-              Reserve Seat
+              Foglalás
             </Link>
           </nav>
         </div>
@@ -70,7 +70,7 @@ function SiteFooter() {
           <p className="mt-3 text-sm text-muted-foreground">{content.tagline}</p>
         </div>
         <div>
-          <h4 className="text-sm text-primary">Quick links</h4>
+          <h4 className="text-sm text-primary">Linkek</h4>
           <ul className="mt-3 space-y-1 text-sm">
             {NAV.map((n) => (
               <li key={n.to}><Link to={n.to} className="text-muted-foreground hover:text-primary">{n.label}</Link></li>
@@ -78,7 +78,7 @@ function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-sm text-primary">Connect</h4>
+          <h4 className="text-sm text-primary">Kapcsolat</h4>
           <ul className="mt-3 flex flex-wrap gap-2">
             {content.socials.map((s) => (
               <li key={s.label}>
@@ -92,7 +92,7 @@ function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {content.eventName}. Built by the community, for the community.
+        © {new Date().getFullYear()} {content.eventName}. A közösség által, a közösségért.
       </div>
     </footer>
   );
