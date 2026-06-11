@@ -266,37 +266,99 @@ function ListEditor({ label, items, onChange }: { label: string; items: string[]
 }
 
 function TablesEditor({ tables, onChange }: { tables: TableLayout[]; onChange: (v: TableLayout[]) => void }) {
+  const rows = useMemo(() => {
+    const map = new Map<number, TableLayout[]>();
+    tables.forEach((t) => {
+      if (!map.has(t.row)) map.set(t.row, []);
+      map.get(t.row)!.push(t);
+    });
+    for (const [, arr] of map) arr.sort((a, b) => (a.column ?? 0) - (b.column ?? 0) || a.id - b.id);
+    return [...map.entries()].sort((a, b) => a[0] - b[0]);
+  }, [tables]);
+
+  const updateTable = (id: number, patch: Partial<TableLayout>) =>
+    onChange(tables.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+
+  const removeTable = (id: number) => onChange(tables.filter((t) => t.id !== id));
+
+  const addTableToRow = (row: number) => {
+    const nextId = Math.max(0, ...tables.map((t) => t.id)) + 1;
+    const inRow = tables.filter((t) => t.row === row);
+    const nextCol = inRow.length ? Math.max(...inRow.map((t) => t.column ?? 0)) + 1 : 1;
+    onChange([...tables, { id: nextId, row, column: nextCol, rotation: 0 }]);
+  };
+
+  const addRow = () => {
+    const nextRow = (Math.max(0, ...tables.map((t) => t.row)) || 0) + 1;
+    const nextId = Math.max(0, ...tables.map((t) => t.id)) + 1;
+    onChange([...tables, { id: nextId, row: nextRow, column: 1, rotation: 0 }]);
+  };
+
+  const move = (id: number, dir: -1 | 1) => {
+    const t = tables.find((x) => x.id === id);
+    if (!t) return;
+    const siblings = tables
+      .filter((x) => x.row === t.row)
+      .sort((a, b) => (a.column ?? 0) - (b.column ?? 0) || a.id - b.id);
+    const idx = siblings.findIndex((x) => x.id === id);
+    const swap = siblings[idx + dir];
+    if (!swap) return;
+    onChange(
+      tables.map((x) => {
+        if (x.id === t.id) return { ...x, column: swap.column ?? idx + 1 + dir };
+        if (x.id === swap.id) return { ...x, column: t.column ?? idx + 1 };
+        return x;
+      }),
+    );
+  };
+
   return (
-    <div className="space-y-3">
-      <h3 className="font-display tracking-widest text-primary">TABLES</h3>
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {tables.map((t, i) => (
-          <div key={t.id} className="flex items-center gap-2 border border-border p-2 text-sm">
-            <span className="w-12 shrink-0 font-display">T{String(t.id).padStart(2, "0")}</span>
-            <Label className="text-xs text-muted-foreground">Row</Label>
-            <Input
-              type="number"
-              className="w-16"
-              value={t.row}
-              onChange={(e) => onChange(updateAt(tables, i, { ...t, row: Number(e.target.value) || 1 }))}
-            />
-            <Button variant="destructive" size="sm" onClick={() => onChange(tables.filter((_, j) => j !== i))}>
-              ✕
-            </Button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-display tracking-widest text-primary">TABLES — ROWS & COLUMNS</h3>
+        <Button variant="outline" size="sm" onClick={addRow}>+ Add row</Button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Each row renders left-to-right on the seating page. Use ◀ ▶ to reorder within a row, change Row to move a table to another row, and pick a rotation for each table.
+      </p>
+      <div className="space-y-4">
+        {rows.map(([rowNum, rowTables]) => (
+          <div key={rowNum} className="border border-border p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-display text-sm tracking-widest text-primary">ROW {rowNum}</span>
+              <Button variant="outline" size="sm" onClick={() => addTableToRow(rowNum)}>+ Add table here</Button>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {rowTables.map((t, i) => (
+                <div key={t.id} className="flex flex-wrap items-center gap-2 border border-border p-2 text-sm">
+                  <span className="w-12 shrink-0 font-display">T{String(t.id).padStart(2, "0")}</span>
+                  <Button variant="outline" size="sm" disabled={i === 0} onClick={() => move(t.id, -1)}>◀</Button>
+                  <Button variant="outline" size="sm" disabled={i === rowTables.length - 1} onClick={() => move(t.id, 1)}>▶</Button>
+                  <Label className="text-xs text-muted-foreground">Row</Label>
+                  <Input
+                    type="number"
+                    className="w-16"
+                    value={t.row}
+                    onChange={(e) => updateTable(t.id, { row: Number(e.target.value) || 1 })}
+                  />
+                  <Label className="text-xs text-muted-foreground">Rot</Label>
+                  <select
+                    className="h-9 border border-border bg-background px-2 text-sm"
+                    value={t.rotation}
+                    onChange={(e) => updateTable(t.id, { rotation: Number(e.target.value) as 0 | 90 | 180 | 270 })}
+                  >
+                    <option value={0}>0°</option>
+                    <option value={90}>90°</option>
+                    <option value={180}>180°</option>
+                    <option value={270}>270°</option>
+                  </select>
+                  <Button variant="destructive" size="sm" onClick={() => removeTable(t.id)}>✕</Button>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          const nextId = Math.max(0, ...tables.map((t) => t.id)) + 1;
-          const lastRow = tables.length ? tables[tables.length - 1].row : 1;
-          onChange([...tables, { id: nextId, row: lastRow, rotation: 0 }]);
-        }}
-      >
-        + Add table
-      </Button>
     </div>
   );
 }
