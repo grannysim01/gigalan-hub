@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { useContent } from "@/lib/store";
+import { useContent, useContentRealtime } from "@/lib/store";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -12,6 +12,7 @@ const NAV = [
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { content } = useContent();
+  useContentRealtime();
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
