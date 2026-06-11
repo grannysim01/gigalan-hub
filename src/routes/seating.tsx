@@ -24,6 +24,9 @@ function SeatingPage() {
       if (!map.has(t.row)) map.set(t.row, []);
       map.get(t.row)!.push(t);
     });
+    for (const [, arr] of map) {
+      arr.sort((a, b) => (a.column ?? 0) - (b.column ?? 0) || a.id - b.id);
+    }
     return [...map.entries()].sort((a, b) => a[0] - b[0]);
   }, [content.tables]);
 
